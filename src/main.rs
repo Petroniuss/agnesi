@@ -1,10 +1,12 @@
+use std::num::ParseFloatError;
 use color_eyre::Result;
 use ethers::providers::Provider;
-use ethers::types::{Address, U256};
-use ethers::utils::{format_units, parse_ether, WEI_IN_ETHER};
-use ethers_providers::{Http, JsonRpcClient, Middleware};
+use ethers::types::{Address, TransactionRequest, U256};
+use ethers::utils::{format_units, parse_ether};
+use ethers_providers::{Http, Middleware};
 use std::time::Duration;
-use tokio::time::sleep;
+use color_eyre::eyre::ContextCompat;
+use ethers::core::k256::elliptic_curve::weierstrass::add;
 
 #[tokio::main]
 async fn main() -> Result<()> {
@@ -12,21 +14,79 @@ async fn main() -> Result<()> {
 
     let provider = local_provider()?;
 
-    let first_address = "0x5679717CE5f1c3fe5260AA513424EF5cb18569a9".parse::<Address>()?;
+    // query existing address/wallet
+    {
+        let address = "0x5679717CE5f1c3fe5260AA513424EF5cb18569a9".parse::<Address>()?;
 
-    let first_balance = provider.get_balance(first_address, None).await?;
+        let balance = provider.get_balance(address, None).await?;
 
-    println!(
-        "Wallet first address balance: {} wei = {} ETH.",
-        first_balance,
-        wei_to_ether(first_balance)
-    );
+        println!(
+            "Wallet {} balance: {}ETH.",
+            address,
+            wei_to_ether(balance)?
+        );
+    }
+
+    // query other wallet.
+    {
+        let address = "0x700962e054A05511c87c19693AB7eF0F1d3EEA26".parse::<Address>()?;
+
+        let balance = provider.get_balance(address, None).await?;
+
+        println!(
+            "Wallet {} balance: {}ETH.",
+            address,
+            wei_to_ether(balance)?
+        );
+    }
+
+    // transaction
+    {
+        let address = "0x5679717CE5f1c3fe5260AA513424EF5cb18569a9"
+            .parse::<Address>()?;
+
+        let other_address = "0x700962e054A05511c87c19693AB7eF0F1d3EEA26"
+            .parse::<Address>()?;
+
+        // Create a transaction to transfer 10000 wei to `other_address`
+        let tx = TransactionRequest::pay(
+            other_address, U256::from(10000u64)
+        ).from(address);
+
+        // Send the transaction and wait for receipt
+        let receipt = provider
+            .send_transaction(tx, None)
+            .await?
+            .log_msg("Pending transfer")
+            .await?
+            .context("Missing receipt")?;
+
+        println!(
+            "TX mined in block {}",
+            receipt.block_number.context("Can not get block number")?
+        );
+
+        println!(
+            "Balance of {} {}",
+            address,
+            wei_to_ether(provider.get_balance(address, None).await?)?
+        );
+
+        println!(
+            "Balance of {} {}",
+            other_address,
+            wei_to_ether(provider.get_balance(other_address, None).await?)?
+        );
+    }
 
     Ok(())
 }
 
-fn wei_to_ether(wei: U256) -> String {
-    format_units(wei, "ether").unwrap()
+fn wei_to_ether(wei: U256) -> Result<f64> {
+    let res =
+        format_units(wei, "ether")?.parse::<f64>()?;
+
+    Ok(res)
 }
 
 fn local_provider() -> Result<Provider<Http>> {
