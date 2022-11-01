@@ -6,10 +6,11 @@ use ethers::types::Address;
 use ethers_contract::Contract;
 use ethers_providers::Http;
 use log::info;
+use crate::core::local_provider;
 
 use crate::solidity;
-use crate::transaction::local_provider;
 
+#[allow(dead_code)]
 pub(crate) async fn simple_storage_interaction() -> Result<()> {
     let contract = prepare_simple_storage_contract()?;
     let address = "0x5679717CE5f1c3fe5260AA513424EF5cb18569a9".parse::<Address>()?;

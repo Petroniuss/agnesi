@@ -1,15 +1,15 @@
-use std::str::FromStr;
-use std::time::Duration;
 
 use color_eyre::eyre::ContextCompat;
 use color_eyre::Result;
 use ethers::prelude::Signature;
-use ethers::providers::{Http, Middleware, Provider};
+use ethers::providers::Middleware;
 use ethers::signers::{LocalWallet, Signer};
+use ethers::types::{Address, TransactionRequest};
 use ethers::types::transaction::eip2718::TypedTransaction::Legacy;
-use ethers::types::{Address, TransactionRequest, U256};
-use ethers::utils::format_units;
 use log::info;
+
+use crate::core::{base_address, base_wallet, local_provider};
+use crate::core::wei_to_ether;
 
 #[allow(dead_code)]
 pub(crate) async fn example() -> Result<()> {
@@ -17,7 +17,7 @@ pub(crate) async fn example() -> Result<()> {
 
     // query existing address/wallet
     {
-        let address = "0x5679717CE5f1c3fe5260AA513424EF5cb18569a9".parse::<Address>()?;
+        let address = base_address()?;
 
         let balance = provider.get_balance(address, None).await?;
 
@@ -36,9 +36,7 @@ pub(crate) async fn example() -> Result<()> {
     // transaction
     {
         // create a wallet with private and public key - it already exists and it has funds!
-        let wallet: LocalWallet = LocalWallet::from_str(
-            "ad24586a2544a2eec873edc81547ecfda73ff3932dde8d47a0342a6cce5a8128",
-        )?;
+        let wallet: LocalWallet = base_wallet()?;
 
         let address = wallet.address();
 
@@ -83,21 +81,4 @@ pub(crate) async fn example() -> Result<()> {
     }
 
     Ok(())
-}
-
-fn wei_to_ether(wei: U256) -> Result<f64> {
-    let res = format_units(wei, "ether")?.parse::<f64>()?;
-
-    Ok(res)
-}
-
-pub(crate) fn local_provider() -> Result<Provider<Http>> {
-    let endpoint = local_endpoint();
-    info!("Connecting to Ganache Endpoint: {}", endpoint);
-
-    Ok(Provider::try_from(endpoint)?.interval(Duration::from_millis(10)))
-}
-
-fn local_endpoint() -> &'static str {
-    "http://127.0.0.1:7545"
 }
