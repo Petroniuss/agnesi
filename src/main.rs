@@ -10,12 +10,14 @@ async fn main() -> Result<()> {
     env_logger::builder().filter_level(LevelFilter::Info).init();
 
     // {
-    //     let project = solidity::compile_solidity_project()?;
-    //
-    //     solidity::display_contract_info(&project)?;
+    //     transaction::example().await?;
     // }
+
     {
-        transaction::example().await?;
+        let project =
+            solidity::compile_solidity_project("simple-storage")?;
+
+        solidity::display_contract_info(&project)?;
     }
 
     Ok(())

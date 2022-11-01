@@ -7,8 +7,8 @@ use ethers::abi::Param;
 use ethers_solc::{Project, ProjectCompileOutput, ProjectPathsConfig};
 
 #[allow(dead_code)]
-pub(crate) fn compile_solidity_project() -> Result<ProjectCompileOutput> {
-    let root = PathBuf::from("resources/solidity/");
+pub(crate) fn compile_solidity_project(path: &str) -> Result<ProjectCompileOutput> {
+    let root = PathBuf::from(format!("resources/solidity/{}", path));
 
     let paths = ProjectPathsConfig::builder()
         .root(&root)
