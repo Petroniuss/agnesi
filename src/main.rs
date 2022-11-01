@@ -3,6 +3,7 @@ use log::LevelFilter;
 
 mod solidity;
 mod transaction;
+mod simple_storage;
 
 #[tokio::main]
 async fn main() -> Result<()> {
@@ -13,12 +14,17 @@ async fn main() -> Result<()> {
     //     transaction::example().await?;
     // }
 
-    {
-        let project =
-            solidity::compile_solidity_project("simple-storage")?;
+    // {
+    //     let project =
+    //         solidity::compile_solidity_project()?;
+    //
+    //     solidity::display_contract_info(&project)?;
+    // }
 
-        solidity::display_contract_info(&project)?;
+    {
+
     }
 
     Ok(())
 }
+

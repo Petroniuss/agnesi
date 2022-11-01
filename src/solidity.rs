@@ -4,11 +4,18 @@ use std::path::PathBuf;
 use color_eyre::eyre::{eyre, ContextCompat};
 use color_eyre::Result;
 use ethers::abi::Param;
-use ethers_solc::{Project, ProjectCompileOutput, ProjectPathsConfig};
+use ethers_solc::{ConfigurableContractArtifact, Project, ProjectCompileOutput, ProjectPathsConfig};
 
 #[allow(dead_code)]
-pub(crate) fn compile_solidity_project(path: &str) -> Result<ProjectCompileOutput> {
-    let root = PathBuf::from(format!("resources/solidity/{}", path));
+pub(crate) fn find_contract_by_name(name: &str, project: &ProjectCompileOutput) -> Result<ConfigurableContractArtifact> {
+    project.clone().into_artifacts()
+        .find(|(contract_name, _)|
+            contract_name.name == name).ok_or(eyre!("Searched contract name not found.")).map(|e| e.1)
+}
+
+#[allow(dead_code)]
+pub(crate) fn compile_solidity_project() -> Result<ProjectCompileOutput> {
+    let root = PathBuf::from(format!("truffle/contracts"));
 
     let paths = ProjectPathsConfig::builder()
         .root(&root)

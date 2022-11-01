@@ -92,7 +92,7 @@ fn wei_to_ether(wei: U256) -> Result<f64> {
     Ok(res)
 }
 
-fn local_provider() -> Result<Provider<Http>> {
+pub(crate) fn local_provider() -> Result<Provider<Http>> {
     let endpoint = local_endpoint();
     info!("Connecting to Ganache Endpoint: {}", endpoint);
 

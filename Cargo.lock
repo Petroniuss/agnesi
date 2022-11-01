@@ -58,6 +58,7 @@ dependencies = [
  "color-eyre",
  "env_logger",
  "ethers",
+ "ethers-contract",
  "ethers-solc",
  "hex",
  "log",
