@@ -1,8 +1,8 @@
 use std::fmt::{Display, Formatter};
 use std::path::PathBuf;
 
+use color_eyre::eyre::{eyre, ContextCompat};
 use color_eyre::Result;
-use color_eyre::eyre::{ContextCompat, eyre};
 use ethers::abi::Param;
 use ethers_solc::{Project, ProjectCompileOutput, ProjectPathsConfig};
 
