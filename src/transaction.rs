@@ -6,8 +6,8 @@ use color_eyre::Result;
 use ethers::prelude::Signature;
 use ethers::providers::{Http, Middleware, Provider};
 use ethers::signers::{LocalWallet, Signer};
-use ethers::types::{Address, TransactionRequest, U256};
 use ethers::types::transaction::eip2718::TypedTransaction::Legacy;
+use ethers::types::{Address, TransactionRequest, U256};
 use ethers::utils::format_units;
 use log::info;
 
@@ -48,14 +48,13 @@ pub(crate) async fn example() -> Result<()> {
         let other_address = "0x700962e054A05511c87c19693AB7eF0F1d3EEA26".parse::<Address>()?;
 
         // Create a transaction to transfer 10000 wei to `other_address`
-        let transaction_request =
-            TransactionRequest::new()
-                .to(other_address)
-                .value(10000)
-                .from(address)
-                .gas_price(1)
-                .gas(21000)
-                .nonce(nonce);
+        let transaction_request = TransactionRequest::new()
+            .to(other_address)
+            .value(10000)
+            .from(address)
+            .gas_price(1)
+            .gas(21000)
+            .nonce(nonce);
 
         // sign the transaction
         let tx = Legacy(transaction_request);
