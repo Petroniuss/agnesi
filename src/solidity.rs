@@ -1,16 +1,12 @@
-use color_eyre::eyre::{eyre, ContextCompat};
-use color_eyre::{Report, Result};
-use ethers::abi::Param;
-use ethers::core::macros::ethers_contract_crate;
-use ethers::providers::{Http, Middleware, Provider};
-use ethers::types::{Address, TransactionRequest, U256};
-use ethers::utils::format_units;
-use ethers_solc::{Project, ProjectBuilder, ProjectCompileOutput, ProjectPathsConfig};
-use log::{info, LevelFilter};
 use std::fmt::{Display, Formatter};
 use std::path::PathBuf;
-use std::time::Duration;
 
+use color_eyre::Result;
+use color_eyre::eyre::{ContextCompat, eyre};
+use ethers::abi::Param;
+use ethers_solc::{Project, ProjectCompileOutput, ProjectPathsConfig};
+
+#[allow(dead_code)]
 pub(crate) fn compile_solidity_project() -> Result<ProjectCompileOutput> {
     let root = PathBuf::from("resources/solidity/");
 
@@ -36,6 +32,7 @@ pub(crate) fn compile_solidity_project() -> Result<ProjectCompileOutput> {
     }
 }
 
+#[allow(dead_code)]
 pub(crate) fn display_contract_info(project: &ProjectCompileOutput) -> Result<()> {
     for contract_info in collect_contracts_info(project.clone())? {
         println!("{}", contract_info);
