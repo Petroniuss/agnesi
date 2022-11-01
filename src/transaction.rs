@@ -35,12 +35,17 @@ pub(crate) async fn example() -> Result<()> {
 
     // transaction
     {
-        let address = "0x5679717CE5f1c3fe5260AA513424EF5cb18569a9".parse::<Address>()?;
+        // create a wallet with private and public key - it already exists and it has funds!
+        let wallet: LocalWallet = LocalWallet::from_str(
+            "ad24586a2544a2eec873edc81547ecfda73ff3932dde8d47a0342a6cce5a8128",
+        )?;
 
-        let other_address = "0x700962e054A05511c87c19693AB7eF0F1d3EEA26".parse::<Address>()?;
+        let address = wallet.address();
 
         // get current nonce.
         let nonce = provider.get_transaction_count(address, None).await?;
+
+        let other_address = "0x700962e054A05511c87c19693AB7eF0F1d3EEA26".parse::<Address>()?;
 
         // Create a transaction to transfer 10000 wei to `other_address`
         let transaction_request =
@@ -51,11 +56,6 @@ pub(crate) async fn example() -> Result<()> {
                 .gas_price(1)
                 .gas(21000)
                 .nonce(nonce);
-
-        // create a wallet with private and public key.
-        let wallet: LocalWallet = LocalWallet::from_str(
-            "ad24586a2544a2eec873edc81547ecfda73ff3932dde8d47a0342a6cce5a8128",
-        )?;
 
         // sign the transaction
         let tx = Legacy(transaction_request);
