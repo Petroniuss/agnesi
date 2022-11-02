@@ -20,7 +20,7 @@ async fn main() -> Result<()> {
     //     solidity::display_contract_info(&project)?;
     // }
 
-    // simple_storage::simple_storage_interaction().await?;
+    simple_storage::simple_storage_interaction().await?;
 
     Ok(())
 }
